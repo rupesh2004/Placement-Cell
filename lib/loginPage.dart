@@ -17,6 +17,15 @@ class LoginPage extends StatefulWidget {
 class _LoginPageState extends State<LoginPage> {
   bool _isObscure = true;
 
+  void getStarted(BuildContext context) {
+  Navigator.push(
+    context,
+    MaterialPageRoute(
+      builder: (context) => UserProfile(),
+    ),
+  );
+}
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -159,10 +168,7 @@ class _LoginPageState extends State<LoginPage> {
                               .infinity, // Set width to match parent width
                           child: ElevatedButton(
                             onPressed: () {
-                              Navigator.of(context).pushReplacement(
-                                        MaterialPageRoute(
-                                            builder: (context) =>
-                                                const UserProfile()));
+                              getStarted(context);
                             },
                             style: ElevatedButton.styleFrom(
                               primary: const Color.fromARGB(176, 17, 60, 232),
