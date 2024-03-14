@@ -22,7 +22,7 @@ class _SignUpPageState extends State<SignUpPage> {
       home: Scaffold(
         appBar: AppBar(
           title: const Text("Sign Up"),
-          backgroundColor: const Color.fromARGB(255, 86, 232, 207),
+          backgroundColor: const Color.fromARGB(176, 17, 60, 232),
           foregroundColor: Colors.white,
         ),
         body: SingleChildScrollView(

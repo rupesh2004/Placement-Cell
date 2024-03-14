@@ -5,7 +5,6 @@ import 'package:flutter/material.dart';
 void main() {
   runApp(const LoginPage());
 }
-
 class LoginPage extends StatefulWidget {
   const LoginPage({Key? key}) : super(key: key);
 
@@ -22,7 +21,7 @@ class _LoginPageState extends State<LoginPage> {
       home: Scaffold(
         appBar: AppBar(
           title: const Text("User Login"),
-          backgroundColor: const Color.fromARGB(255, 86, 232, 207),
+          backgroundColor: const Color.fromARGB(176, 17, 60, 232),
           foregroundColor: Colors.white,
         ),
         body: SingleChildScrollView(

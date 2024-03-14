@@ -22,7 +22,7 @@ class _ForgotPasswordState extends State<ForgotPassword> {
       home: Scaffold(
         appBar: AppBar(
           title: const Text("Forget Password"),
-          backgroundColor: const Color.fromARGB(255, 86, 232, 207),
+          backgroundColor: const Color.fromARGB(176, 17, 60, 232),
           foregroundColor: Colors.white,
         ),
         body: SingleChildScrollView(
@@ -82,7 +82,7 @@ class _ForgotPasswordState extends State<ForgotPassword> {
                         ),
                         Container(
                           margin: const EdgeInsets.only(left: 20, right: 20),
-                          child:const  Column(
+                          child: const Column(
                             children: [
                               TextField(
                                 decoration: InputDecoration(
@@ -103,7 +103,6 @@ class _ForgotPasswordState extends State<ForgotPassword> {
                         const SizedBox(
                           height: 10,
                         ),
-                        
                         Container(
                           margin: const EdgeInsets.only(left: 20, right: 20),
                           width: double
@@ -124,41 +123,41 @@ class _ForgotPasswordState extends State<ForgotPassword> {
                             ),
                           ),
                         ),
-                        
-                        const SizedBox(height: 30,),
-                        Container(
-                  child: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        const Text(
-                          "Remember Password?",
-                          
-                          style: TextStyle(fontSize: 15,
-                          color: Color.fromARGB(126, 34, 30, 30)),
-                        ),
                         const SizedBox(
-                          width: 5,
+                          height: 30,
                         ),
-                        GestureDetector(
-                          onTap: () {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) =>const  LoginPage()),
-                            );
-                          },
-                          child: const Text(
-                            "Sign In",
-                            style: TextStyle(
-                                fontSize: 15,
-                             color: Color.fromARGB(255, 31, 86, 237)
+                        Container(
+                          child: Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                const Text(
+                                  "Remember Password?",
+                                  style: TextStyle(
+                                      fontSize: 15,
+                                      color: Color.fromARGB(126, 34, 30, 30)),
                                 ),
-                          ),
-                        )
-                      ]),
-                ),
-                        
-                      
+                                const SizedBox(
+                                  width: 5,
+                                ),
+                                GestureDetector(
+                                  onTap: () {
+                                    Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                          builder: (context) =>
+                                              const LoginPage()),
+                                    );
+                                  },
+                                  child: const Text(
+                                    "Sign In",
+                                    style: TextStyle(
+                                        fontSize: 15,
+                                        color:
+                                            Color.fromARGB(255, 31, 86, 237)),
+                                  ),
+                                )
+                              ]),
+                        ),
                       ],
                     ),
                   ),

@@ -1,12 +1,16 @@
 import 'dart:async';
-import 'package:flutter/material.dart';
 import 'package:company/loginPage.dart';
+import 'package:flutter/material.dart';
+
+void main() {
+  runApp(const SplashScreen());
+}
 
 class SplashScreen extends StatefulWidget {
-  const SplashScreen({super.key});
+  const SplashScreen({Key? key}) : super(key: key);
 
   @override
-  _SplashScreenState createState() => _SplashScreenState();
+  State<SplashScreen> createState() => _SplashScreenState();
 }
 
 class _SplashScreenState extends State<SplashScreen> {
@@ -21,9 +25,10 @@ class _SplashScreenState extends State<SplashScreen> {
         setState(() {
           _isLoading = false;
         });
-         Navigator.of(context).pushReplacement(
-            MaterialPageRoute(builder: (context) => const LoginPage()));
-       },
+        Navigator.of(context).pushReplacement(
+          MaterialPageRoute(builder: (context) => const LoginPage()),
+        );
+      },
     );
   }
 
@@ -31,34 +36,42 @@ class _SplashScreenState extends State<SplashScreen> {
   Widget build(BuildContext context) {
     return MaterialApp(
       home: Scaffold(
-        backgroundColor:const Color.fromARGB(255, 174, 230, 242),
-        
+        appBar: AppBar(
+          title: const Text("RIT Placement Cell"),
+        ),
         body: Center(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: <Widget>[
-              Image.asset(
-                'assets/images/rit.jpg',
-                fit: BoxFit.fill,
-                width: double.infinity,
-                height: 250,
-              ),
-              const SizedBox(height: 30,),
-              const Text(
-                'Placement Cell, RIT',
-                style: TextStyle(
-                  fontSize: 24,
-                  fontWeight: FontWeight.bold,
+          child: Container(
+            width: double.infinity,
+            height: double.infinity,
+            color: const Color.fromARGB(255, 231, 213, 50),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Image.network(
+                  'https://www.ritindia.edu/ritwebsite/admin/upload/slider/64a3d7c9edb6c_1688459209.jpg',
+                  width: double.infinity,
+                  height: 300,
                 ),
-              ),
-              const SizedBox(height: 20),
-              _isLoading
-                  ? const CircularProgressIndicator(
-                      valueColor: AlwaysStoppedAnimation<Color>(Color.fromARGB(
-                          255, 5, 153, 158)), // Set the color to green
-                    )
-                  : const SizedBox(),
-            ],
+                const SizedBox(
+                  height: 20,
+                ),
+                const Text(
+                  'Placement Cell, RIT',
+                  style: TextStyle(
+                    fontSize: 24,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                const SizedBox(height: 20),
+                _isLoading
+                    ? const CircularProgressIndicator(
+                        valueColor: AlwaysStoppedAnimation<Color>(
+                            Color.fromARGB(255, 255, 255,
+                                255)), // Set the color to green
+                      )
+                    : const SizedBox(),
+              ],
+            ),
           ),
         ),
       ),
