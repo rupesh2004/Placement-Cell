@@ -1,10 +1,12 @@
 import 'package:company/ForgetPasswordPage.dart';
 import 'package:company/SignUp.dart';
+import 'package:company/userProfile.dart';
 import 'package:flutter/material.dart';
 
 void main() {
   runApp(const LoginPage());
 }
+
 class LoginPage extends StatefulWidget {
   const LoginPage({Key? key}) : super(key: key);
 
@@ -156,7 +158,12 @@ class _LoginPageState extends State<LoginPage> {
                           width: double
                               .infinity, // Set width to match parent width
                           child: ElevatedButton(
-                            onPressed: () {},
+                            onPressed: () {
+                              Navigator.of(context).pushReplacement(
+                                        MaterialPageRoute(
+                                            builder: (context) =>
+                                                const UserProfile()));
+                            },
                             style: ElevatedButton.styleFrom(
                               primary: const Color.fromARGB(176, 17, 60, 232),
                               foregroundColor: Colors.white,
