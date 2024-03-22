@@ -60,7 +60,7 @@ class _UserProfileState extends State<UserProfile> {
                         Container(
                           child: const Positioned(
                             top:
-                                85, // Adjust the top position to place it on top of the first image
+                                65, // Adjust the top position to place it on top of the first image
                             left: 20,
                             right: 0,
                             child: Align(
