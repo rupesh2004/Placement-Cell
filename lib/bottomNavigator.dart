@@ -1,3 +1,5 @@
+import 'package:company/applyForm.dart';
+import 'package:company/homePage.dart';
 import 'package:company/userPro.dart';
 import 'package:flutter/material.dart';
 import 'package:bottom_navy_bar/bottom_navy_bar.dart';
@@ -18,9 +20,9 @@ class _bottomNavigator extends State<bottomNavigator> {
   int _selectedIndex = 0;
 
   final List<Widget> _screens = [
-    UserProfilePage(),
-    SearchScreen(),
-    SearchScreen(),
+    Feed(),
+    SearchJob(),
+    ApplyForm(),
     UserProfilePage(),
   ];
 
