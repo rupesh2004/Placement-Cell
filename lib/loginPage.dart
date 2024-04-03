@@ -1,6 +1,6 @@
 import 'package:company/ForgetPasswordPage.dart';
 import 'package:company/SignUp.dart';
-import 'package:company/userProfile.dart';
+import 'package:company/bottomNavigator.dart';
 import 'package:flutter/material.dart';
 
 void main() {
@@ -21,7 +21,7 @@ class _LoginPageState extends State<LoginPage> {
   Navigator.push(
     context,
     MaterialPageRoute(
-      builder: (context) => UserProfile(),
+      builder: (context) =>const bottomNavigator(),
     ),
   );
 }
