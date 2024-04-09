@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:company/jobTitle.dart'; // Import the JobTile widget
 
 class SearchJob extends StatefulWidget {
   @override
@@ -60,7 +61,7 @@ class _SearchJobState extends State<SearchJob> {
         itemBuilder: (context, index) {
           return GestureDetector(
             onTap: () {
-              // Handle navigation to a new page here
+              // Navigate to DetailsPage and pass the job title
               Navigator.push(
                 context,
                 MaterialPageRoute(
@@ -68,8 +69,12 @@ class _SearchJobState extends State<SearchJob> {
                 ),
               );
             },
-            child: ListTile(
-              title: Text(_filteredJobs[index]),
+            child: JobTile(
+              // Pass job details as parameters to JobTile
+              jobImage: "assets/images/microsoft.jpg", // Replace with actual path to image
+              jobTitle: _filteredJobs[index],
+              jobLocation: "Location", // Replace with actual location
+              numOfApplicants: 10, // Replace with actual number of applicants
             ),
           );
         },
