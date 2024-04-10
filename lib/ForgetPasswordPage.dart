@@ -1,10 +1,8 @@
 import 'package:company/ForgetPasswordPage.dart';
 import 'package:company/loginPage.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-
-void main() {
-  runApp(const ForgotPassword());
-}
+import 'package:fluttertoast/fluttertoast.dart';
 
 class ForgotPassword extends StatefulWidget {
   const ForgotPassword({Key? key}) : super(key: key);
@@ -14,7 +12,31 @@ class ForgotPassword extends StatefulWidget {
 }
 
 class _ForgotPasswordState extends State<ForgotPassword> {
+  final TextEditingController _emailController = TextEditingController();
   bool _isObscure = true;
+
+  Future<void> _sendPasswordResetEmail() async {
+    try {
+      await FirebaseAuth.instance
+          .sendPasswordResetEmail(email: _emailController.text);
+          Fluttertoast.showToast(
+        msg: "Password reset link sent successfully",
+        toastLength: Toast.LENGTH_LONG,
+        gravity: ToastGravity.BOTTOM,
+      );
+         Navigator.push(context,
+          MaterialPageRoute(builder: (context) => LoginPage()));
+      // Show success message or navigate to a success page
+      
+    } catch (e) {
+      // Handle errors such as invalid email, user not found, etc.
+      Fluttertoast.showToast(
+        msg: "Error sending password reset email: $e",
+        toastLength: Toast.LENGTH_LONG,
+        gravity: ToastGravity.BOTTOM,
+      );
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -82,10 +104,11 @@ class _ForgotPasswordState extends State<ForgotPassword> {
                         ),
                         Container(
                           margin: const EdgeInsets.only(left: 20, right: 20),
-                          child: const Column(
+                          child: Column(
                             children: [
                               TextField(
-                                decoration: InputDecoration(
+                                controller: _emailController,
+                                decoration: const InputDecoration(
                                   filled: true,
                                   fillColor: Color.fromARGB(255, 239, 232, 232),
                                   border: OutlineInputBorder(),
@@ -108,7 +131,9 @@ class _ForgotPasswordState extends State<ForgotPassword> {
                           width: double
                               .infinity, // Set width to match parent width
                           child: ElevatedButton(
-                            onPressed: () {},
+                            onPressed: () {
+                              _sendPasswordResetEmail();
+                            },
                             style: ElevatedButton.styleFrom(
                               primary: const Color.fromARGB(176, 17, 60, 232),
                               foregroundColor: Colors.white,

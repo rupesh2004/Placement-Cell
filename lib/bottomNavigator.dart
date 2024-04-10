@@ -5,11 +5,8 @@ import 'package:flutter/material.dart';
 import 'package:bottom_navy_bar/bottom_navy_bar.dart';
 import 'search.dart'; // Import your SearchScreen
 
-void main() {
-  runApp(const bottomNavigator());
-}
 
-class bottomNavigator extends StatefulWidget {
+class  bottomNavigator extends StatefulWidget {
   const bottomNavigator({Key? key}) : super(key: key);
 
   @override

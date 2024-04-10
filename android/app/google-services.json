@@ -1,0 +1,82 @@
+{
+  "project_info": {
+    "project_number": "263667142485",
+    "project_id": "rit-placement-cell",
+    "storage_bucket": "rit-placement-cell.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:263667142485:android:97837ac50586d06cab29dc",
+        "android_client_info": {
+          "package_name": "com.example.company"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "263667142485-4asuj2erh8o1c2duct88mkpcrpnkett9.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBdWmsk5bNK6IqaiRVGOzihYcU2mp-9-xo"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "263667142485-4asuj2erh8o1c2duct88mkpcrpnkett9.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "263667142485-ru8ct03pnp442jadi43h25ur6sae0707.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.company.RunnerTests"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:263667142485:android:ebbe2994f08eb597ab29dc",
+        "android_client_info": {
+          "package_name": "com.example.demo123"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "263667142485-4asuj2erh8o1c2duct88mkpcrpnkett9.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBdWmsk5bNK6IqaiRVGOzihYcU2mp-9-xo"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "263667142485-4asuj2erh8o1c2duct88mkpcrpnkett9.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "263667142485-ru8ct03pnp442jadi43h25ur6sae0707.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.company.RunnerTests"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

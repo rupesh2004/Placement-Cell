@@ -1,11 +1,10 @@
 import 'package:company/ForgetPasswordPage.dart';
 import 'package:company/SignUp.dart';
 import 'package:company/bottomNavigator.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 
-void main() {
-  runApp(const LoginPage());
-}
 
 class LoginPage extends StatefulWidget {
   const LoginPage({Key? key}) : super(key: key);
@@ -16,15 +15,43 @@ class LoginPage extends StatefulWidget {
 
 class _LoginPageState extends State<LoginPage> {
   bool _isObscure = true;
+  final TextEditingController _emailController = TextEditingController();
+  final TextEditingController _passwordController = TextEditingController();
 
-  void getStarted(BuildContext context) {
-  Navigator.push(
-    context,
-    MaterialPageRoute(
-      builder: (context) =>const bottomNavigator(),
-    ),
-  );
-}
+
+void _signIn(BuildContext context) async {
+    final String email = _emailController.text.trim();
+    final String password = _passwordController.text;
+
+    try {
+      UserCredential userCredential = await FirebaseAuth.instance
+          .signInWithEmailAndPassword(email: email, password: password);
+
+        Fluttertoast.showToast(
+        msg: "Logged In Successfully",
+        toastLength: Toast.LENGTH_LONG,
+        gravity: ToastGravity.BOTTOM,
+      );
+      
+     Navigator.push(
+    context, MaterialPageRoute(builder: (context) => bottomNavigator()));
+    } on FirebaseAuthException catch (e) {
+       
+      String errorMessage = 'An error occurred, please try again later.';
+      if (e.code == 'user-not-found') {
+       
+        errorMessage = 'No user found for that email.';
+      } else if (e.code == 'wrong-password') {
+        
+        errorMessage = 'Wrong password provided for that user.';
+      }
+     Fluttertoast.showToast(
+        msg: "$errorMessage",
+        toastLength: Toast.LENGTH_LONG,
+        gravity: ToastGravity.BOTTOM,
+      );
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -94,7 +121,8 @@ class _LoginPageState extends State<LoginPage> {
                           margin: const EdgeInsets.only(left: 20, right: 20),
                           child: Column(
                             children: [
-                              const TextField(
+                              TextField(
+                                controller : _emailController,
                                 decoration: InputDecoration(
                                   filled: true,
                                   fillColor: Color.fromARGB(255, 239, 232, 232),
@@ -108,6 +136,7 @@ class _LoginPageState extends State<LoginPage> {
                               ),
                               const SizedBox(height: 10),
                               TextField(
+                                controller: _passwordController,
                                 obscureText: _isObscure,
                                 decoration: InputDecoration(
                                   filled: true,
@@ -168,7 +197,7 @@ class _LoginPageState extends State<LoginPage> {
                               .infinity, // Set width to match parent width
                           child: ElevatedButton(
                             onPressed: () {
-                              getStarted(context);
+                              _signIn(context);
                             },
                             style: ElevatedButton.styleFrom(
                               primary: const Color.fromARGB(176, 17, 60, 232),
