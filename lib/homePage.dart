@@ -16,7 +16,7 @@ class feedState extends State<Feed>{
           backgroundImage: AssetImage('assets/images/boy.png'),
           maxRadius: 10,
         ),
-        title: const Text('Hello, Ramesh',style: TextStyle(
+        title: const Text('Hello, sir',style: TextStyle(
           fontWeight: FontWeight.w400,
 
         ),),

@@ -1,8 +1,6 @@
+import 'package:company/loginPage.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-
-void main() {
-  runApp(const UserProfilePage());
-}
 
 class UserProfilePage extends StatefulWidget {
   const UserProfilePage({Key? key}) : super(key: key);
@@ -21,6 +19,20 @@ class Company {
 
 class _UserProfileState extends State<UserProfilePage> {
   late List<Company> companies;
+  List<String> list = <String>['Sign Out'];
+  String dropdownValue = '';
+  GlobalKey _popupMenuKey = GlobalKey();
+
+  void openDropdownMenu() {
+    dynamic popupMenuState = _popupMenuKey.currentState;
+    popupMenuState.showButtonMenu();
+  }
+
+  void signOut() async {
+    await FirebaseAuth.instance.signOut();
+    Navigator.push(
+        context, MaterialPageRoute(builder: (context) => const LoginPage()));
+  }
 
   @override
   void initState() {
@@ -44,9 +56,22 @@ class _UserProfileState extends State<UserProfilePage> {
             ),
           ),
           actions: [
-            IconButton(
-              onPressed: () {},
-              icon: const Icon(Icons.more_vert),
+            PopupMenuButton<String>(
+              key: _popupMenuKey,
+              onSelected: (value) {
+                // This is called when the user selects an item.
+                if (value == 'Sign Out') {
+                  signOut();
+                }
+              },
+              itemBuilder: (BuildContext context) {
+                return list.map((String value) {
+                  return PopupMenuItem<String>(
+                    value: value,
+                    child: Text(value),
+                  );
+                }).toList();
+              },
             ),
           ],
         ),
@@ -56,7 +81,7 @@ class _UserProfileState extends State<UserProfilePage> {
               Stack(
                 children: [
                   Container(
-                    height: 200, 
+                    height: 200,
                     child: Stack(
                       children: [
                         Positioned(
@@ -136,7 +161,8 @@ class _UserProfileState extends State<UserProfilePage> {
                       company: companies[index],
                       onBookmarkPressed: () {
                         setState(() {
-                          companies[index].isBookmarked = !companies[index].isBookmarked;
+                          companies[index].isBookmarked =
+                              !companies[index].isBookmarked;
                         });
                       },
                     );
@@ -176,7 +202,7 @@ class CompanyWidget extends StatelessWidget {
           Expanded(
             child: Container(
               margin: const EdgeInsets.symmetric(horizontal: 8),
-              child:const Column(
+              child: const Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [

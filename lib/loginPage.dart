@@ -4,6 +4,7 @@ import 'package:company/bottomNavigator.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 
 
 class LoginPage extends StatefulWidget {
@@ -17,6 +18,16 @@ class _LoginPageState extends State<LoginPage> {
   bool _isObscure = true;
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
+  final FirebaseAuth _auth = FirebaseAuth.instance;
+ @override
+  void initState() {
+    super.initState();
+     User? user = _auth.currentUser;
+    if (user != null) {
+    Navigator.push(context, MaterialPageRoute(builder: (context) => const bottomNavigator()));
+    }
+  }
+
 
 
 void _signIn(BuildContext context) async {
@@ -233,10 +244,25 @@ void _signIn(BuildContext context) async {
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                             children: [
-                              Image.asset(
-                                'assets/images/google.png', // Path to Google image asset
-                                width: 40, // Set width of the image
-                                height: 40, // Set height of the image
+                              GestureDetector(
+                                onTap: () {
+                                  //signInWithGoogle();
+
+                                   try {
+     
+    } catch (e) {
+      Fluttertoast.showToast(
+        msg: "Failed to sign in with Google. Please try again later.",
+        toastLength: Toast.LENGTH_LONG,
+        gravity: ToastGravity.BOTTOM,
+      );
+    }
+                            },
+                                child: Image.asset(
+                                  'assets/images/google.png', // Path to Google image asset
+                                  width: 40, // Set width of the image
+                                  height: 40, // Set height of the image
+                                ),
                               ),
                               Image.asset(
                                 'assets/images/fb.png', // Path to Google image asset
