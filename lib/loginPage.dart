@@ -1,11 +1,11 @@
 import 'package:company/ForgetPasswordPage.dart';
 import 'package:company/SignUp.dart';
+import 'package:company/adminLogin.dart';
 import 'package:company/bottomNavigator.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:google_sign_in/google_sign_in.dart';
-
 
 class LoginPage extends StatefulWidget {
   const LoginPage({Key? key}) : super(key: key);
@@ -19,45 +19,65 @@ class _LoginPageState extends State<LoginPage> {
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
   final FirebaseAuth _auth = FirebaseAuth.instance;
- @override
+  @override
   void initState() {
     super.initState();
-     User? user = _auth.currentUser;
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      checkCurrentUser();
+    });
+  }
+
+  void checkCurrentUser() {
+    User? user = _auth.currentUser;
     if (user != null) {
-    Navigator.push(context, MaterialPageRoute(builder: (context) => const bottomNavigator()));
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (context) => const bottomNavigator()),
+      );
     }
   }
 
+  adminLogin() {
+  final String email = _emailController.text.trim();
+  final String password = _passwordController.text;
+  if (email == "admin@gmail.com" && password == "admin") {
+    // Navigate to a different screen for admin
+    Navigator.push(
+      context,
+      MaterialPageRoute(builder: (context) => AdminPage()), // Changed to AdminLogin()
+    );
+  } else {
+    // If not admin, proceed with regular sign-in
+    _signIn(context, email, password);
+  }
+}
 
 
-void _signIn(BuildContext context) async {
-    final String email = _emailController.text.trim();
-    final String password = _passwordController.text;
-
+  void _signIn(BuildContext context, String email, String password) async {
     try {
       UserCredential userCredential = await FirebaseAuth.instance
           .signInWithEmailAndPassword(email: email, password: password);
 
-        Fluttertoast.showToast(
+      Fluttertoast.showToast(
         msg: "Logged In Successfully",
         toastLength: Toast.LENGTH_LONG,
         gravity: ToastGravity.BOTTOM,
       );
-      
-     Navigator.push(
-    context, MaterialPageRoute(builder: (context) => bottomNavigator()));
+
+      // Navigate to the appropriate screen after successful sign-in
+      Navigator.push(
+        context,
+        MaterialPageRoute(builder: (context) => bottomNavigator()),
+      );
     } on FirebaseAuthException catch (e) {
-       
       String errorMessage = 'An error occurred, please try again later.';
       if (e.code == 'user-not-found') {
-       
         errorMessage = 'No user found for that email.';
       } else if (e.code == 'wrong-password') {
-        
         errorMessage = 'Wrong password provided for that user.';
       }
-     Fluttertoast.showToast(
-        msg: "$errorMessage",
+      Fluttertoast.showToast(
+        msg: errorMessage,
         toastLength: Toast.LENGTH_LONG,
         gravity: ToastGravity.BOTTOM,
       );
@@ -133,8 +153,8 @@ void _signIn(BuildContext context) async {
                           child: Column(
                             children: [
                               TextField(
-                                controller : _emailController,
-                                decoration: InputDecoration(
+                                controller: _emailController,
+                                decoration: const InputDecoration(
                                   filled: true,
                                   fillColor: Color.fromARGB(255, 239, 232, 232),
                                   border: OutlineInputBorder(),
@@ -208,7 +228,7 @@ void _signIn(BuildContext context) async {
                               .infinity, // Set width to match parent width
                           child: ElevatedButton(
                             onPressed: () {
-                              _signIn(context);
+                              adminLogin();
                             },
                             style: ElevatedButton.styleFrom(
                               primary: const Color.fromARGB(176, 17, 60, 232),
@@ -248,16 +268,15 @@ void _signIn(BuildContext context) async {
                                 onTap: () {
                                   //signInWithGoogle();
 
-                                   try {
-     
-    } catch (e) {
-      Fluttertoast.showToast(
-        msg: "Failed to sign in with Google. Please try again later.",
-        toastLength: Toast.LENGTH_LONG,
-        gravity: ToastGravity.BOTTOM,
-      );
-    }
-                            },
+                                  try {} catch (e) {
+                                    Fluttertoast.showToast(
+                                      msg:
+                                          "Failed to sign in with Google. Please try again later.",
+                                      toastLength: Toast.LENGTH_LONG,
+                                      gravity: ToastGravity.BOTTOM,
+                                    );
+                                  }
+                                },
                                 child: Image.asset(
                                   'assets/images/google.png', // Path to Google image asset
                                   width: 40, // Set width of the image
