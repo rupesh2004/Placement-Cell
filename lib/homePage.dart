@@ -1,180 +1,125 @@
+import 'package:company/applyForm.dart';
 import 'package:flutter/material.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
-class Feed extends StatefulWidget {
+class CompanyListScreen extends StatelessWidget {
   @override
-  feedState createState() => feedState();
-}
-
-class feedState extends State<Feed>{
-  @override
-  Widget build(BuildContext context){
+  Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Colors.blue,
-        foregroundColor: Colors.white,
-        leading: const CircleAvatar(
-          backgroundImage: AssetImage('assets/images/boy.png'),
-          maxRadius: 10,
-        ),
-        title: const Text('Hello, sir',style: TextStyle(
-          fontWeight: FontWeight.w400,
-
-        ),),
-       
+        title: Text('Companies'),
+            backgroundColor: const Color.fromARGB(176, 17, 60, 232),
+            foregroundColor: Colors.white,
       ),
-      body: SingleChildScrollView(
-        child: Container(
-          padding: EdgeInsets.all(10.0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Row(
-                children: [
-                  const CircleAvatar(
-                    radius: 20,
-                    backgroundImage: AssetImage('assets/images/now.jpg'), // Provide a path to your avatar image
-                  ),
-                  const SizedBox(width: 10),
-                  const Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        'Group Technology',
-                        style: TextStyle(
-                          fontWeight: FontWeight.w600,
-                          fontSize: 16,
-                        ),
-                      ),
-                      Text(
-                        '1350 Followers',
-                        style: TextStyle(
-                          fontSize: 12,
-                          color: Colors.grey,
-                        ),
-                      ),
-                    ],
-                  ),
-                  const Spacer(), // Push the Follow button to the end
-                  ElevatedButton(
-                    onPressed: () {},
-                    child: const Text('Follow',style: TextStyle(
-                      color: Colors.blue
-                    ),),
-                  ),
-                ],
-              ),
-              const SizedBox(height: 10),
-              // const Divider(), // Add a divider between feed items
-              // const SizedBox(height: 10),
-              const Text('At Group, we take great pride in fostering a culture that values and celebrates accomplishments ...',
-                style: TextStyle(
-                fontSize: 14, fontWeight: FontWeight.w500
-              ),),
-              const SizedBox(height: 2,),
-              TextButton(onPressed: (){}, child: const Text('See More',style: TextStyle(
-                color: Colors.blue
-              ),)),
-              Image.asset('assets/images/now.jpg',width: double.infinity,fit: BoxFit.cover,),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  IconButton(
-                    icon: const Icon(Icons.thumb_up), // Like icon
-                    onPressed: () {
-                      // Handle like functionality here
-                    },
-                  ),
-                  IconButton(
-                    icon: const Icon(Icons.comment), // Comment icon
-                    onPressed: () {
-                      // Handle comment functionality here
-                    },
-                  ),
-                  IconButton(
-                    icon: const Icon(Icons.share), // Share icon
-                    onPressed: () {
-                      // Handle share functionality here
-                    },
-                  ),
-                ],
-              ),
-              const Divider(),
-              Row(
-                children: [
-                  const CircleAvatar(
-                    radius: 20,
-                    backgroundImage: AssetImage('assets/images/now.jpg'), // Provide a path to your avatar image
-                  ),
-                  const SizedBox(width: 10),
-                  const Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        'Infosys Technology',
-                        style: TextStyle(
-                          fontWeight: FontWeight.w600,
-                          fontSize: 16,
-                        ),
-                      ),
-                      Text(
-                        '1.2M Followers',
-                        style: TextStyle(
-                          fontSize: 12,
-                          color: Colors.grey,
-                        ),
-                      ),
-                    ],
-                  ),
-                  const Spacer(), // Push the Follow button to the end
-                  ElevatedButton(
-                    onPressed: () {},
-                    child: const Text('Following',style: TextStyle(
-                        color: Colors.blue
-                    ),),
-                  ),
-                ],
-              ),
-              const SizedBox(height: 10),
-              // const Divider(), // Add a divider between feed items
-              // const SizedBox(height: 10),
-              const Text('At Group, we take great pride in fostering a culture that values and celebrates accomplishments ...',
-                style: TextStyle(
-                    fontSize: 14, fontWeight: FontWeight.w500
-                ),),
-              const SizedBox(height: 2,),
-              TextButton(onPressed: (){}, child: const Text('See More',style: TextStyle(
-                  color: Colors.blue
-              ),)),
-              Image.asset('assets/images/now.jpg',width: double.infinity,fit: BoxFit.cover,),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  IconButton(
-                    icon: const Icon(Icons.thumb_up), // Like icon
-                    onPressed: () {
-                      // Handle like functionality here
-                    },
-                  ),
-                  IconButton(
-                    icon: const Icon(Icons.comment), // Comment icon
-                    onPressed: () {
-                      // Handle comment functionality here
-                    },
-                  ),
-                  IconButton(
-                    icon: const Icon(Icons.share), // Share icon
-                    onPressed: () {
-                      // Handle share functionality here
-                    },
-                  ),
-                ],
-              ),
-              const Divider(),
-            ],
-          ),
-        ),
+      backgroundColor: Color.fromARGB(255, 175, 238, 236),
+      body: StreamBuilder(
+        stream: FirebaseFirestore.instance.collection('companies').snapshots(),
+        builder: (context, AsyncSnapshot<QuerySnapshot> snapshot) {
+          if (!snapshot.hasData) {
+            return Center(child: CircularProgressIndicator());
+          }
+
+          var companies = snapshot.data!.docs;
+
+          return ListView.builder(
+            itemCount: companies.length,
+            itemBuilder: (context, index) {
+              var company = companies[index];
+              return CompanyCard(
+                companyName: company['name'],
+                companyInfo: company['info'],
+                imageUrl: company['logo_url'],
+              );
+            },
+          );
+        },
       ),
     );
   }
 }
 
+class CompanyCard extends StatelessWidget {
+  final String companyName;
+  final String companyInfo;
+  final String imageUrl;
+
+  const CompanyCard({
+    required this.companyName,
+    required this.companyInfo,
+    required this.imageUrl,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Card(
+      margin: EdgeInsets.only(left: 20, right: 20, top: 20),
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(15.0),
+      ),
+      color:  const Color.fromARGB(176, 17, 60, 232),
+      
+      elevation: 5.0,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          ClipRRect(
+            borderRadius: BorderRadius.vertical(top: Radius.circular(15.0)),
+            child: Image.network(
+              imageUrl,
+              fit: BoxFit.fill,
+              height: 150,
+              width: double.infinity,
+            ),
+          ),
+          Padding(
+            padding: EdgeInsets.all(8.0),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        companyName,
+                        style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontSize: 18.0,
+                          color: Colors.white
+                        ),
+                      ),
+                      SizedBox(height: 8.0),
+                      Text(
+                        companyInfo,
+                        style: TextStyle(fontSize: 16.0,
+                          color: Colors.white
+                        ),
+                        
+                      ),
+                      SizedBox(height: 8.0),
+                    ],
+                  ),
+                ),
+                ElevatedButton(
+                  onPressed: () {
+                  Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => ApplyForm(companyName: companyName),
+      ),
+    );
+                  },
+                  style: ElevatedButton.styleFrom(
+                    primary: Color.fromARGB(255, 255, 255, 255),
+                    onPrimary: Colors.black,
+                  ),
+                  child: Text('Apply'),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}

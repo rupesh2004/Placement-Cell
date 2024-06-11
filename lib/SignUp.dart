@@ -2,6 +2,9 @@ import 'package:company/loginPage.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_storage/firebase_storage.dart';
+import 'package:image_picker/image_picker.dart';
+import 'dart:io';
 import 'package:fluttertoast/fluttertoast.dart';
 
 class SignUpPage extends StatefulWidget {
@@ -15,6 +18,7 @@ class _SignUpPageState extends State<SignUpPage> {
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
   final TextEditingController _mobileNoController = TextEditingController();
+  File? _imageFile;
   bool _isObscure = true;
   bool _isChecked = false;
 
@@ -24,12 +28,41 @@ class _SignUpPageState extends State<SignUpPage> {
     });
   }
 
+  Future<void> _pickImage() async {
+     final pickedFile = await ImagePicker().pickImage(
+      source: ImageSource.gallery,
+      maxWidth: 1024,
+      maxHeight: 1024,
+    );
+
+    if (pickedFile != null) {
+      setState(() {
+        _imageFile = File(pickedFile.path);
+      });
+    }
+  }
+
+  Future<String> _uploadImage() async {
+    if (_imageFile == null) {
+      return ''; // Return empty string if no image is selected
+    }
+
+    Reference ref = FirebaseStorage.instance
+        .ref()
+        .child('user_images')
+        .child(DateTime.now().toString() + '.jpg');
+    UploadTask uploadTask = ref.putFile(_imageFile!);
+
+    TaskSnapshot snapshot = await uploadTask.whenComplete(() {});
+    String downloadUrl = await snapshot.ref.getDownloadURL();
+    return downloadUrl;
+  }
+
   void _createUser() async {
     final String email = _emailController.text.trim();
     final String password = _passwordController.text.trim();
     final String mobileNo = _mobileNoController.text.trim();
 
-    // Validate email format
     if (!RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$').hasMatch(email)) {
       Navigator.pop(context);
       Fluttertoast.showToast(
@@ -40,7 +73,6 @@ class _SignUpPageState extends State<SignUpPage> {
       return;
     }
 
-    // Validate password strength
     if (password.length < 6) {
       Navigator.pop(context);
       Fluttertoast.showToast(
@@ -51,7 +83,6 @@ class _SignUpPageState extends State<SignUpPage> {
       return;
     }
 
-    // Validate mobile number
     if (!RegExp(r'^[0-9]{10}$').hasMatch(mobileNo)) {
       Navigator.pop(context);
       Fluttertoast.showToast(
@@ -61,31 +92,35 @@ class _SignUpPageState extends State<SignUpPage> {
       );
       return;
     }
+
     showDialog(
       context: context,
-      barrierDismissible: false, // Prevent user from dismissing the dialog
+      barrierDismissible: false,
       builder: (BuildContext context) {
         return Center(
-          child: CircularProgressIndicator(), // Circular loading indicator
+          child: CircularProgressIndicator(),
         );
       },
     );
+
     try {
-      // Create user with FirebaseAuth
+      String imageUrl = await _uploadImage();
+
       UserCredential userCredential =
           await FirebaseAuth.instance.createUserWithEmailAndPassword(
         email: email,
         password: password,
       );
 
-      // Save user data to Firestore
       await FirebaseFirestore.instance
           .collection('users')
           .doc(userCredential.user!.uid)
           .set({
         'email': email,
         'mobileNo': mobileNo,
+        'imageUrl': imageUrl,
       });
+
       Navigator.pop(context);
       Fluttertoast.showToast(
         msg: "User Registered",
@@ -96,15 +131,14 @@ class _SignUpPageState extends State<SignUpPage> {
         MaterialPageRoute(builder: (context) => LoginPage()),
       );
     } on FirebaseAuthException catch (e) {
+      Navigator.pop(context);
       if (e.code == 'weak-password') {
-        Navigator.pop(context);
         Fluttertoast.showToast(
           msg: "The password provided is too weak.",
           toastLength: Toast.LENGTH_LONG,
           gravity: ToastGravity.BOTTOM,
         );
       } else if (e.code == 'email-already-in-use') {
-        Navigator.pop(context);
         Fluttertoast.showToast(
           msg: "The account already exists for that email.",
           toastLength: Toast.LENGTH_LONG,
@@ -195,6 +229,11 @@ class _SignUpPageState extends State<SignUpPage> {
                   ),
                 ),
               ),
+              SizedBox(height: 10,),
+              ElevatedButton(
+                onPressed: _pickImage,
+                child: Text('Upload Image'),
+              ),
               SizedBox(height: 10),
               Row(
                 children: [
@@ -209,7 +248,8 @@ class _SignUpPageState extends State<SignUpPage> {
                   Text("I agree with Terms and Conditions"),
                 ],
               ),
-              SizedBox(height: 20),
+            
+              SizedBox(height: 10),
               SizedBox(
                 width: double.infinity,
                 child: ElevatedButton(
@@ -272,20 +312,6 @@ class _SignUpPageState extends State<SignUpPage> {
             ],
           ),
         ),
-      ),
-    );
-  }
-}
-
-class OTPVerificationPage extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text("OTP Verification"),
-      ),
-      body: Center(
-        child: Text("OTP Verification Page"),
       ),
     );
   }

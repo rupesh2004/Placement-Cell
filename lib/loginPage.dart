@@ -32,7 +32,7 @@ class _LoginPageState extends State<LoginPage> {
     if (user != null) {
       Navigator.pushReplacement(
         context,
-        MaterialPageRoute(builder: (context) => const bottomNavigator()),
+        MaterialPageRoute(builder: (context) => const BottomNavigator()),
       );
     }
   }
@@ -67,7 +67,7 @@ class _LoginPageState extends State<LoginPage> {
       // Navigate to the appropriate screen after successful sign-in
       Navigator.push(
         context,
-        MaterialPageRoute(builder: (context) => bottomNavigator()),
+        MaterialPageRoute(builder: (context) => BottomNavigator()),
       );
     } on FirebaseAuthException catch (e) {
       String errorMessage = 'An error occurred, please try again later.';

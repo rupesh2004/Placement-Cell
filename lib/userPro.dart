@@ -1,5 +1,6 @@
 import 'package:company/loginPage.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
 class UserProfilePage extends StatefulWidget {
@@ -10,11 +11,23 @@ class UserProfilePage extends StatefulWidget {
 }
 
 class Company {
+  final String name;
+  final String logoUrl;
   bool isBookmarked;
 
   Company({
+    required this.name,
+    required this.logoUrl,
     this.isBookmarked = false,
   });
+
+  factory Company.fromFirestore(DocumentSnapshot doc) {
+    Map<String, dynamic> data = doc.data() as Map<String, dynamic>;
+    return Company(
+      name: data['name'] ?? 'No Name',
+      logoUrl: data['logoUrl'] ?? 'https://example.com/default_logo.png',
+    );
+  }
 }
 
 class _UserProfileState extends State<UserProfilePage> {
@@ -22,6 +35,9 @@ class _UserProfileState extends State<UserProfilePage> {
   List<String> list = <String>['Sign Out'];
   String dropdownValue = '';
   GlobalKey _popupMenuKey = GlobalKey();
+  String userEmail = 'No Email';
+  String userPhone = 'No Phone Number';
+  String profileImageUrl = 'https://example.com/default_profile_image.png'; // Default image URL
 
   void openDropdownMenu() {
     dynamic popupMenuState = _popupMenuKey.currentState;
@@ -37,7 +53,54 @@ class _UserProfileState extends State<UserProfilePage> {
   @override
   void initState() {
     super.initState();
-    companies = List.generate(3, (_) => Company());
+    companies = [];
+    fetchUserDetails();
+  }
+
+  void fetchUserDetails() async {
+    User? user = FirebaseAuth.instance.currentUser;
+    if (user != null) {
+      DocumentSnapshot userDoc = await FirebaseFirestore.instance
+          .collection('users')
+          .doc(user.uid)
+          .get();
+      if (userDoc.exists) {
+        setState(() {
+          userEmail = userDoc['email']?.toString() ?? 'No Email';
+          userPhone = userDoc['mobileNo']?.toString() ?? 'No Phone Number';
+          profileImageUrl = userDoc['imageUrl']?.toString() ??
+              'https://example.com/default_profile_image.png';
+        });
+        fetchUserAppliedCompanies(userPhone);
+      } else {
+        setState(() {
+          userEmail = user.email ?? 'No Email';
+          userPhone = user.phoneNumber ?? 'No Phone Number';
+        });
+      }
+    }
+  }
+
+  void fetchUserAppliedCompanies(String userPhone) async {
+    QuerySnapshot responsesSnapshot = await FirebaseFirestore.instance
+        .collection('studResponses')
+        .where('mobileNo', isEqualTo: userPhone)
+        .get();
+
+    List<String> companyIds = responsesSnapshot.docs
+        .map((doc) => doc['companyId'] as String)
+        .toList();
+
+    QuerySnapshot companySnapshot = await FirebaseFirestore.instance
+        .collection('companies')
+        .where(FieldPath.documentId, whereIn: companyIds)
+        .get();
+
+    setState(() {
+      companies = companySnapshot.docs
+          .map((doc) => Company.fromFirestore(doc))
+          .toList();
+    });
   }
 
   @override
@@ -59,7 +122,6 @@ class _UserProfileState extends State<UserProfilePage> {
             PopupMenuButton<String>(
               key: _popupMenuKey,
               onSelected: (value) {
-                // This is called when the user selects an item.
                 if (value == 'Sign Out') {
                   signOut();
                 }
@@ -85,20 +147,18 @@ class _UserProfileState extends State<UserProfilePage> {
                     child: Stack(
                       children: [
                         Positioned(
-                          // Adjust the top position to place it on top of the first image
                           left: 0,
                           right: 0,
-                          child: Image.network(
-                            "https://media.licdn.com/dms/image/D4D16AQE8PJ9tT-pLww/profile-displaybackgroundimage-shrink_350_1400/0/1700799198816?e=1715817600&v=beta&t=ZEkigCna451AI7aKt9EK-FwlzRCtbOrFIyT-ydhdPao",
+                          child: Image.asset(
+                            "assets/images/backImage.jpg",
                             width: double.infinity,
                             height: 120,
                             fit: BoxFit.fill,
                           ),
                         ),
                         Container(
-                          child: const Positioned(
-                            top:
-                                65, // Adjust the top position to place it on top of the first image
+                          child: Positioned(
+                            top: 65,
                             left: 20,
                             right: 0,
                             child: Align(
@@ -109,7 +169,7 @@ class _UserProfileState extends State<UserProfilePage> {
                                 child: CircleAvatar(
                                   radius: 40,
                                   backgroundImage: NetworkImage(
-                                    "https://media.licdn.com/dms/image/D4D03AQF3IxNkwo8VdQ/profile-displayphoto-shrink_400_400/0/1708500069972?e=1715817600&v=beta&t=YDA1EzuREOKdmkQ4qF1n2O_fEI92OXQ0jD3lzR_A-Fo",
+                                    profileImageUrl,
                                   ),
                                 ),
                               ),
@@ -123,21 +183,22 @@ class _UserProfileState extends State<UserProfilePage> {
               ),
               Container(
                 margin: const EdgeInsets.only(left: 30),
-                child: const Align(
+                child: Align(
                   alignment: Alignment.centerLeft,
                   child: Text(
-                    'Rupesh Bhosale',
-                    style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
+                    userEmail,
+                    style: const TextStyle(
+                        fontSize: 20, fontWeight: FontWeight.bold),
                   ),
                 ),
               ),
               Container(
                 margin: const EdgeInsets.only(left: 30),
-                child: const Align(
+                child: Align(
                   alignment: Alignment.centerLeft,
                   child: Text(
-                    'UI/UX Designer',
-                    style: TextStyle(
+                    userPhone,
+                    style: const TextStyle(
                         fontSize: 18,
                         color: Color.fromARGB(255, 159, 161, 159)),
                   ),
@@ -148,7 +209,7 @@ class _UserProfileState extends State<UserProfilePage> {
                 child: const Align(
                   alignment: Alignment.centerLeft,
                   child: Text(
-                    'Saved Jobs',
+                    'Applied Companies',
                     style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
                   ),
                 ),
@@ -194,7 +255,7 @@ class CompanyWidget extends StatelessWidget {
       child: Row(
         children: [
           Image.network(
-            "https://static.vecteezy.com/system/resources/thumbnails/011/153/368/small/3d-website-developer-working-on-laptop-illustration-png.png",
+            company.logoUrl,
             width: 100,
             height: 130,
             fit: BoxFit.fill,
@@ -202,38 +263,18 @@ class CompanyWidget extends StatelessWidget {
           Expanded(
             child: Container(
               margin: const EdgeInsets.symmetric(horizontal: 8),
-              child: const Column(
+              child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Text(
-                    'Web Developer',
+                    company.name,
                     style: TextStyle(
                       fontWeight: FontWeight.bold,
                       fontSize: 18,
                     ),
                   ),
-                  Text(
-                    'Atlas Copco',
-                    style: TextStyle(
-                      fontSize: 16,
-                      color: Colors.grey,
-                    ),
-                  ),
-                  Text(
-                    '1900d',
-                    style: TextStyle(
-                      fontSize: 16,
-                      color: Color.fromARGB(255, 11, 221, 232),
-                    ),
-                  ),
-                  Text(
-                    '4.5 (1234)',
-                    style: TextStyle(
-                      fontSize: 16,
-                      color: Colors.grey,
-                    ),
-                  ),
+                  // Additional company details can be added here
                 ],
               ),
             ),

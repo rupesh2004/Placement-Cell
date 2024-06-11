@@ -1,69 +1,61 @@
-import 'package:company/applyForm.dart';
+
 import 'package:company/homePage.dart';
 import 'package:company/userPro.dart';
 import 'package:flutter/material.dart';
 import 'package:bottom_navy_bar/bottom_navy_bar.dart';
 import 'search.dart'; // Import your SearchScreen
+// Import the file where CompanyCard is defined
 
-
-class  bottomNavigator extends StatefulWidget {
-  const bottomNavigator({Key? key}) : super(key: key);
+class BottomNavigator extends StatefulWidget {
+  const BottomNavigator({Key? key}) : super(key: key);
 
   @override
-  State<bottomNavigator> createState() => _bottomNavigator();
+  State<BottomNavigator> createState() => _BottomNavigatorState();
 }
 
-class _bottomNavigator extends State<bottomNavigator> {
+class _BottomNavigatorState extends State<BottomNavigator> {
   int _selectedIndex = 0;
 
   final List<Widget> _screens = [
-    Feed(),
+    CompanyListScreen(),
     SearchJob(),
-    ApplyForm(),
+    
     UserProfilePage(),
   ];
 
-
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      home: Scaffold(
-        body: _screens[_selectedIndex],
-        bottomNavigationBar: BottomNavyBar(
-          selectedIndex: _selectedIndex,
-          onItemSelected: (index) {
-            setState(() {
-              _selectedIndex = index;
-            });
-          },
-          items: [
-            BottomNavyBarItem(
-              icon: const Icon(Icons.home),
-              title: const Text('Home'),
-              activeColor: Colors.blueAccent,
-              inactiveColor: const Color.fromARGB(255, 139, 184, 205),
-            ),
-            BottomNavyBarItem(
-              icon: const Icon(Icons.search),
-              title: const Text('Search'),
-              activeColor: Colors.blueAccent,
-              inactiveColor: const Color.fromARGB(255, 139, 184, 205),
-            ),
-            BottomNavyBarItem(
-              icon: const Icon(Icons.schedule),
-              title: const Text('Schedule'),
-              activeColor: Colors.blueAccent,
-              inactiveColor: const Color.fromARGB(255, 139, 184, 205),
-            ),
-            BottomNavyBarItem(
-              icon: const Icon(Icons.person),
-              title: const Text('Profile'),
-              activeColor: Colors.blueAccent,
-              inactiveColor: const Color.fromARGB(255, 139, 184, 205),
-            ),
-          ],
-          containerHeight: 55,
-        ),
+    return Scaffold(
+      body: _screens[_selectedIndex],
+      bottomNavigationBar: BottomNavyBar(
+        selectedIndex: _selectedIndex,
+        onItemSelected: (index) {
+          setState(() {
+            _selectedIndex = index;
+          });
+        },
+        items: [
+          BottomNavyBarItem(
+            icon: const Icon(Icons.home),
+            title: const Text('Home'),
+            activeColor: Colors.blueAccent,
+            inactiveColor: Color.fromARGB(255, 139, 184, 205),
+          ),
+          BottomNavyBarItem(
+            icon: const Icon(Icons.search),
+            title: const Text('Search'),
+            activeColor: Colors.blueAccent,
+            inactiveColor: Color.fromARGB(255, 139, 184, 205),
+          ),
+          
+          BottomNavyBarItem(
+            icon: const Icon(Icons.person),
+            title: const Text('Profile'),
+            activeColor: Colors.blueAccent,
+            inactiveColor: Color.fromARGB(255, 139, 184, 205),
+          ),
+        ],
+        containerHeight: 55,
       ),
     );
   }
