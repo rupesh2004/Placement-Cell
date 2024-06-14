@@ -3,8 +3,7 @@ import 'package:company/homePage.dart';
 import 'package:company/userPro.dart';
 import 'package:flutter/material.dart';
 import 'package:bottom_navy_bar/bottom_navy_bar.dart';
-import 'search.dart'; // Import your SearchScreen
-// Import the file where CompanyCard is defined
+import 'search.dart'; 
 
 class BottomNavigator extends StatefulWidget {
   const BottomNavigator({Key? key}) : super(key: key);
@@ -19,7 +18,6 @@ class _BottomNavigatorState extends State<BottomNavigator> {
   final List<Widget> _screens = [
     CompanyListScreen(),
     SearchJob(),
-    
     UserProfilePage(),
   ];
 

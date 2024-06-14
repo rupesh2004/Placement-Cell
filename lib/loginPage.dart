@@ -42,7 +42,7 @@ class _LoginPageState extends State<LoginPage> {
   final String password = _passwordController.text;
   if (email == "admin@gmail.com" && password == "admin") {
     // Navigate to a different screen for admin
-    Navigator.push(
+    Navigator.pushReplacement(
       context,
       MaterialPageRoute(builder: (context) => AdminPage()), // Changed to AdminLogin()
     );

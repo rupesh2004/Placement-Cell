@@ -4,15 +4,14 @@ import 'package:flutter/material.dart';
 class JobTile extends StatefulWidget {
   final String jobImage;
   final String jobTitle;
-  final String jobLocation;
-  final int numOfApplicants;
+  final String jobInfo;
 
   const JobTile({
     Key? key,
     required this.jobImage,
     required this.jobTitle,
-    required this.jobLocation,
-    required this.numOfApplicants,
+    required this.jobInfo,
+
   }) : super(key: key);
 
   @override
@@ -45,14 +44,7 @@ class _JobTileState extends State<JobTile> {
                     ),
                   ),
                   SizedBox(height: 6),
-                  Text(
-                    '${widget.jobLocation}',
-                    style: TextStyle(
-                      fontSize: 17,
-                      fontWeight: FontWeight.w400,
-                      color: Colors.black54,
-                    ),
-                  ),
+                  
                   SizedBox(height: 8),
                   Container(
                     decoration: BoxDecoration(
@@ -61,7 +53,7 @@ class _JobTileState extends State<JobTile> {
                     ),
                     padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                     child: Text(
-                      '${widget.numOfApplicants} applicants',
+                      '${widget.jobInfo} applicants',
                       style: TextStyle(
                         color: Color(0xff8353E2),
                         fontSize: 16,

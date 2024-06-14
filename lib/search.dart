@@ -1,5 +1,5 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:company/jobTitle.dart'; // Import the JobTile widget
 
 class SearchJob extends StatefulWidget {
   @override
@@ -9,32 +9,29 @@ class SearchJob extends StatefulWidget {
 class _SearchJobState extends State<SearchJob> {
   TextEditingController _controller = TextEditingController();
   String _searchText = "";
-  List<String> _jobs = [
-    "Software Engineer",
-    "Web Developer",
-    "Data Scientist",
-    "UI/UX Designer",
-    "Product Manager",
-    "Android Developer",
-    "Mobile App Developer",
-    "Network Administrator",
-    "Business Analyst",
-    "Quality Assurance Engineer",
-    "DevOps Engineer",
-  ];
-  List<String> _filteredJobs = [];
+  List<DocumentSnapshot> _allJobs = [];
+  List<DocumentSnapshot> _filteredJobs = [];
 
   @override
   void initState() {
     super.initState();
-    _filteredJobs.addAll(_jobs);
+    _fetchJobs();
+  }
+
+  Future<void> _fetchJobs() async {
+    QuerySnapshot snapshot = await FirebaseFirestore.instance.collection('companies').get();
+    setState(() {
+      _allJobs = snapshot.docs;
+      _filteredJobs = _allJobs;
+    });
   }
 
   void _filterJobs(String query) {
     setState(() {
-      _filteredJobs = _jobs
-          .where((job) => job.toLowerCase().contains(query.toLowerCase()))
-          .toList();
+      _filteredJobs = _allJobs.where((job) {
+        String jobName = job['name'].toString().toLowerCase();
+        return jobName.contains(query.toLowerCase());
+      }).toList();
     });
   }
 
@@ -46,7 +43,7 @@ class _SearchJobState extends State<SearchJob> {
           controller: _controller,
           decoration: InputDecoration(
             hintText: "Search...",
-            suffixIcon: Icon(Icons.search)
+            suffixIcon: Icon(Icons.search),
           ),
           onChanged: (value) {
             setState(() {
@@ -59,22 +56,21 @@ class _SearchJobState extends State<SearchJob> {
       body: ListView.builder(
         itemCount: _filteredJobs.length,
         itemBuilder: (context, index) {
+          DocumentSnapshot job = _filteredJobs[index];
           return GestureDetector(
             onTap: () {
-              // Navigate to DetailsPage and pass the job title
               Navigator.push(
                 context,
                 MaterialPageRoute(
-                  builder: (context) => DetailsPage(job: _filteredJobs[index]),
+                  builder: (context) => DetailsPage(job: job),
                 ),
               );
             },
             child: JobTile(
-              // Pass job details as parameters to JobTile
-              jobImage: "assets/images/microsoft.jpg", // Replace with actual path to image
-              jobTitle: _filteredJobs[index],
-              jobLocation: "Location", // Replace with actual location
-              numOfApplicants: 10, // Replace with actual number of applicants
+              jobImage: job['logo_url'],
+              jobTitle: job['name'],
+              jobInfo: job['info'], 
+
             ),
           );
         },
@@ -84,7 +80,7 @@ class _SearchJobState extends State<SearchJob> {
 }
 
 class DetailsPage extends StatelessWidget {
-  final String job;
+  final DocumentSnapshot job;
 
   DetailsPage({required this.job});
 
@@ -95,8 +91,38 @@ class DetailsPage extends StatelessWidget {
         title: Text('Job Details'),
       ),
       body: Center(
-        child: Text('Details of $job'),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Image.network(job['logo_url']),
+            Text('Name: ${job['name']}'),
+            Text('Info: ${job['info']}'),
+          ],
+        ),
       ),
+    );
+  }
+}
+
+class JobTile extends StatelessWidget {
+  final String jobImage;
+  final String jobTitle;
+  final String jobInfo;
+
+
+  JobTile({
+    required this.jobImage,
+    required this.jobTitle,
+    required this.jobInfo,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return ListTile(
+      leading: Image.network(jobImage),
+      title: Text(jobTitle),
+      subtitle: Text('$jobInfo'),
+      isThreeLine: true,
     );
   }
 }
